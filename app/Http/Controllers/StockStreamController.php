@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use App\Http\Requests\UploadExcelRequest;
 use App\Service\StockStreamService;
-use Carbon\Carbon;
 use App\RestFullApi\Facade\ApiResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,7 +22,6 @@ class StockStreamController extends Controller
      */
     public function importExcel(UploadExcelRequest $request)
     {
-
         $data = $request->validated();
         $this->stockStreamService->importExcelData(
             data: $data
