@@ -1,0 +1,36 @@
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+/.env
+/.env.*
+/Homestead.yaml
+/Homestead.json
+/.vagrant
+.phpunit.result.cache
+.php_cs.cache
+.php_cs.dist.cache
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+
+/storage/app/public
+/storage/framework/cache/data
+/storage/logs
+
+# Ignore compiled files
+/public/hot
+/public/mix-manifest.json
+/public/css
+/public/js
+/public/vendor
+
+# Ignore IDE and editor files
+*.log
+*.sqlite
+*.sqlite3
+
+# Ignore deployment files
+.env.backup
+.env.local
