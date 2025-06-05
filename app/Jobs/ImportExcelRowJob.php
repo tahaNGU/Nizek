@@ -26,16 +26,22 @@ class ImportExcelRowJob implements ShouldQueue
         $insertData = [];
 
         foreach ($this->rows as $row) {
-
-            $price = $row[1];
+            try {
+                $recordedAt = Carbon::createFromFormat('m/d/Y', $row[0])->timestamp;
+            } catch (\Exception $e) {
+                // تاریخ نامعتبر بود، رد می‌کنیم
+                continue;
+            }
 
             $insertData[] = [
-                'date' => Carbon::createFromFormat('m/d/Y', $row[0])->timestamp,
-                'date_string' => $row[0],
-                'stock_price' => $price,
+                'recorded_at' => $recordedAt,
+                'recorded_date' => $row[0],
+                'stock_price' => $row[1],
             ];
         }
 
-        DB::table('prices')->insert($insertData);
+        if (!empty($insertData)) {
+            DB::table('stock_streams')->insert($insertData);
+        }
     }
 }

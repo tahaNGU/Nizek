@@ -1,7 +1,7 @@
 <?php
-use App\Http\Controllers\PriceController;
+use App\Http\Controllers\StockStreamController;
 use Illuminate\Support\Facades\Route;
 
-Route::post("/import/excel",[PriceController::class,"importExcel"]);
-Route::post("/price-change-report",[PriceController::class,"report"]);
-Route::post("/report",[PriceController::class,"customReport"]);
+Route::post("/import/excel",[StockStreamController::class,"importExcel"]);
+Route::post("/price-change-report",[StockStreamController::class,"report"]);
+Route::post("/report",[StockStreamController::class,"customReport"]);

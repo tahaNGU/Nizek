@@ -1,99 +1,98 @@
 services:
-    app:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        image: laravel-app
-        container_name: laravel-app
-        restart: unless-stopped
-        volumes:
-            - .:/var/www/html
-        environment:
-            DB_HOST: mysql
-            DB_PORT: 3306
-            DB_DATABASE: laravel
-            DB_USERNAME: laravel
-            DB_PASSWORD: secret
-            QUEUE_CONNECTION: database
-            APP_ENV: local
-        command: >
-            sh -c "
-                if [ -d /var/www/html/storage ] && [ -d /var/www/html/bootstrap/cache ]; then
-                    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache &&
-                    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache;
-                fi
-                php-fpm
-            "
-        expose:
-            - 9000
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel-app
+    container_name: laravel-app
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+      QUEUE_CONNECTION: database
+      APP_ENV: local
+    command: >
+      sh -c "
+          if [ -d /var/www/html/storage ] && [ -d /var/www/html/bootstrap/cache ]; then
+              chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache &&
+              chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache;
+          fi
+          php-fpm
+      "
+    expose:
+      - 9000
 
-    nginx:
-        image: nginx:alpine
-        container_name: nginx
-        restart: unless-stopped
-        ports:
-            - "8000:80"
-        volumes:
-            - .:/var/www/html
-            - ./nginx.conf:/etc/nginx/conf.d/default.conf
-        depends_on:
-            - app
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
 
-    mysql:
-        image: mysql:8
-        container_name: mysql
-        restart: unless-stopped
-        ports:
-            - "3307:3306"
-        environment:
-            MYSQL_DATABASE: laravel
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_USER: laravel
-            MYSQL_PASSWORD: secret
-        volumes:
-            - db-data:/var/lib/mysql
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    volumes:
+      - db-data:/var/lib/mysql
 
-    redis:
-        image: redis:alpine
-        container_name: redis
-        ports:
-            - "6380:6379"
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        container_name: phpmyadmin
-        restart: unless-stopped
-        ports:
-            - "8080:80"
-        environment:
-            PMA_HOST: mysql
-            PMA_PORT: 3306
-            PMA_USER: laravel
-            PMA_PASSWORD: secret
-        depends_on:
-            - mysql
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6380:6379"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: laravel
+      PMA_PASSWORD: secret
+    depends_on:
+      - mysql
 
-
-    queue:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        container_name: laravel-queue
-        restart: unless-stopped
-        volumes:
-            - .:/var/www/html
-        environment:
-            DB_HOST: mysql
-            DB_PORT: 3306
-            DB_DATABASE: laravel
-            DB_USERNAME: laravel
-            DB_PASSWORD: secret
-            QUEUE_CONNECTION: database
-            APP_ENV: local
-        command: [ "php", "artisan", "queue:work", "--tries=3" ]
-        depends_on:
-            - app
-            - mysql
-            - redis
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-queue
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+      APP_ENV: local
+      QUEUE_CONNECTION: database
+    command: [ "php", "artisan", "queue:work", "--tries=3" ]
+    depends_on:
+      - app
+      - mysql
+      - redis
 
 volumes:
-    db-data:
+  db-data:

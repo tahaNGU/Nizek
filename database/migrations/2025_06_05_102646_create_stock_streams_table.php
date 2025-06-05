@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('stock_streams', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('date');
-            $table->string('date_string');
+            $table->unsignedBigInteger('recorded_at');
+            $table->string('recorded_date');
             $table->decimal('stock_price', 10, 6);
             $table->timestamps();
         });

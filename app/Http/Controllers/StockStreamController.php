@@ -8,10 +8,11 @@ use App\Jobs\ImportExcelRowJob;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use App\RestFullApi\Facade\ApiResponse;
+use Symfony\Component\HttpFoundation\Response;
 
-class PriceController extends Controller
+class StockStreamController extends Controller
 {
     public function importExcel(UploadExcelRequest $request)
     {
@@ -24,13 +25,9 @@ class PriceController extends Controller
 
         foreach ($chunks as $chunk) {
             $row = json_decode(json_encode($chunk), true);
-            if (is_array($row)) {
-                ImportExcelRowJob::dispatch($row);
-            } else {
-                Log::error('Invalid row type', ['row' => $row]);
-            }
+            ImportExcelRowJob::dispatch($row);
         }
-        return response()->json(['status' => 'success']);
+        return ApiResponse::withMessage('Queue Started Successfully')->withStatus(Response::HTTP_OK)->Builder();
     }
 
     public function report(Request $request)
