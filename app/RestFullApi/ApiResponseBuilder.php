@@ -8,25 +8,44 @@ class ApiResponseBuilder
 
     public function __construct()
     {
-        $this->ApiResponse=new ApiResponse();
+        $this->ApiResponse = new ApiResponse();
     }
 
-    public function withMessage(string $message){
+    /**
+     * @param string $message
+     * @return $this
+     */
+    public function withMessage(string $message)
+    {
         $this->ApiResponse->setMessage($message);
         return $this;
     }
 
-    public function withData(mixed $data){
+    /**
+     * @param mixed $data
+     * @return $this
+     */
+    public function withData(mixed $data)
+    {
         $this->ApiResponse->setData($data);
         return $this;
     }
 
-    public function withStatus(int $status){
+    /**
+     * @param int $status
+     * @return $this
+     */
+    public function withStatus(int $status)
+    {
         $this->ApiResponse->setStatus($status);
         return $this;
     }
 
-    public function Builder(){
+    /**
+     * @return mixed
+     */
+    public function Builder()
+    {
         return $this->ApiResponse->response();
     }
 }

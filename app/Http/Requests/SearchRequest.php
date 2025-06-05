@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\RestFullApi\Facade\ApiResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\Response;
 
 class SearchRequest extends FormRequest
 {
@@ -31,12 +33,7 @@ class SearchRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        $response = response()->json([
-            'status' => 'error',
-            'message' => 'Validation failed',
-            'errors' => $validator->errors()
-        ], 422);
-
+        $response = ApiResponse::withMessage('Validation Error')->withData($validator->errors())->withStatus(Response::HTTP_UNPROCESSABLE_ENTITY)->Builder();
         throw new HttpResponseException($response);
     }
 }
