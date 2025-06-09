@@ -1,12 +1,17 @@
 #!/bin/sh
 
-if [ -d /var/www/html/storage ] && [ -d /var/www/html/bootstrap/cache ]; then
-    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+if [ ! -f vendor/autoload.php ]; then
+  composer install --no-interaction --prefer-dist --optimize-autoloader
 fi
 
-echo "Starting Laravel queue worker..."
-php artisan queue:work --tries=3 &
+if [ -d storage ] && [ -d bootstrap/cache ]; then
+    chown -R www-data:www-data storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache
+fi
 
-echo "Starting php-fpm..."
-php-fpm
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan config:cache
+
+php-fpm -F
